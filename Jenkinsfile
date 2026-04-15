@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Check Environment') {
             steps {
                 bat 'python --version'
@@ -25,7 +24,8 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'pytest -v --html=reports/report.html'
+                bat 'if not exist reports mkdir reports'
+                bat 'pytest -v tests --html=reports/report.html --self-contained-html'
             }
         }
     }
