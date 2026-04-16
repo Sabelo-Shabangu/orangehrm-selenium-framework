@@ -3,7 +3,8 @@ import sys
 
 import pytest
 from selenium import webdriver
-from selenium.webdriver.edge.options import Options
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -18,7 +19,7 @@ from pages.login_page import LoginPage
 def driver():
     options = Options()
 
-    # CI/CD-safe configuration for Jenkins service execution.
+    # CI/CD-stable Chrome configuration for Jenkins.
     options.add_argument("--headless=new")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
@@ -28,7 +29,12 @@ def driver():
     # Optional stability flag for some CI environments.
     options.add_argument("--remote-debugging-port=9222")
 
-    browser = webdriver.Edge(options=options)
+    # Prevent profile lock issues in Jenkins.
+    options.add_argument("--user-data-dir=C:/temp/chrome-profile")
+
+    service = Service()
+
+    browser = webdriver.Chrome(service=service, options=options)
     yield browser
     browser.quit()
 
