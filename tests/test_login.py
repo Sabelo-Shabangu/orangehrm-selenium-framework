@@ -3,6 +3,7 @@ import sys
 
 import pytest
 from selenium import webdriver
+from selenium.webdriver.edge.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,7 +16,19 @@ from pages.login_page import LoginPage
 
 @pytest.fixture
 def driver():
-    browser = webdriver.Edge()
+    options = Options()
+
+    # CI/CD-safe configuration for Jenkins service execution.
+    options.add_argument("--headless=new")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--window-size=1920,1080")
+
+    # Optional stability flag for some CI environments.
+    options.add_argument("--remote-debugging-port=9222")
+
+    browser = webdriver.Edge(options=options)
     yield browser
     browser.quit()
 
